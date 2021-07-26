@@ -63,11 +63,8 @@ class UploadAdoptReleaseFiles {
         println("Using Github org:'${org}'")
         // jdk11 => 11
         def numberVersion = version.replaceAll(/[^0-9]/, "")
-        def repoName = "${org}/temurin${numberVersion}-binaries"
+        def repoName = "sophia-guo/runaqaTest"
 
-        if (vendor != "adopt") {
-            repoName = "${org}/open${version}-${vendor}-binaries"
-        }
 
         return github.getRepository(repoName)
     }
