@@ -63,8 +63,12 @@ class UploadAdoptReleaseFiles {
         println("Using Github org:'${org}'")
         // jdk11 => 11
         def numberVersion = version.replaceAll(/[^0-9]/, "")
-        def repoName = "sophia-guo/runaqaTest"
 
+        String repoName = System.getenv("REPORT_ARCHIVE_REPO")
+        if (token == null) {
+            System.err.println("Could not find REPORT_ARCHIVE_REPO")
+            System.exit(1)
+        }
 
         return github.getRepository(repoName)
     }
