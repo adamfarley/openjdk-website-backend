@@ -64,6 +64,7 @@ die () {
 cygwin=false
 msys=false
 darwin=false
+arm=false
 nonstop=false
 case "`uname`" in
   CYGWIN* )
@@ -77,6 +78,11 @@ case "`uname`" in
     ;;
   NONSTOP* )
     nonstop=true
+    ;;
+esac
+case "`uname -m`" in
+  arm* )
+    arm=true
     ;;
 esac
 
@@ -144,7 +150,7 @@ if $cygwin ; then
         OURCYGPATTERN="$OURCYGPATTERN|($GRADLE_CYGPATTERN)"
     fi
     # Now convert the arguments - kludge to limit ourselves to /bin/sh
-    i=0
+    declare -i i=0
     for arg in "$@" ; do
         CHECK=`echo "$arg"|egrep -c "$OURCYGPATTERN" -`
         CHECK2=`echo "$arg"|egrep -c "^-"`                                 ### Determine if an option
@@ -152,30 +158,39 @@ if $cygwin ; then
         if [ $CHECK -ne 0 ] && [ $CHECK2 -eq 0 ] ; then                    ### Added a condition
             eval `echo args$i`=`cygpath --path --ignore --mixed "$arg"`
         else
-            eval `echo args$i`="\"$arg\""
+            superarg=`echo $arg | sed 's/\"/\\\"/g'`
+            eval `echo args$i`="\"$superarg\""
         fi
-        i=$((i+1))
+        i+=1
     done
     case $i in
-        (0) set -- ;;
-        (1) set -- "$args0" ;;
-        (2) set -- "$args0" "$args1" ;;
-        (3) set -- "$args0" "$args1" "$args2" ;;
-        (4) set -- "$args0" "$args1" "$args2" "$args3" ;;
-        (5) set -- "$args0" "$args1" "$args2" "$args3" "$args4" ;;
-        (6) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" ;;
-        (7) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" ;;
-        (8) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" ;;
-        (9) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" "$args8" ;;
+        0) set -- ;;
+        1) set -- "$args0" ;;
+        2) set -- "$args0" "$args1" ;;
+        3) set -- "$args0" "$args1" "$args2" ;;
+        4) set -- "$args0" "$args1" "$args2" "$args3" ;;
+        5) set -- "$args0" "$args1" "$args2" "$args3" "$args4" ;;
+        6) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" ;;
+        7) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" ;;
+        8) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" ;;
+        9) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" "$args8" ;;
     esac
 fi
+
 
 # Escape application args
 save () {
     for i do printf %s\\n "$i" | sed "s/'/'\\\\''/g;1s/^/'/;\$s/\$/' \\\\/" ; done
     echo " "
 }
-APP_ARGS=$(save "$@")
+echo "debug starts here: $@"
+APP_ARGS=`save "$@"`
+
+arch_specific_java_options=""
+if $arm; then
+    arch_specific_java_options="-Djava.net.preferIPv6Addresses=true"
+fi
+export _JAVA_OPTIONS="$arch_specific_java_options -Xmx1g $_JAVA_OPTIONS"
 
 # Collect all arguments for the java command, following the shell quoting and substitution rules
 eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS "\"-Dorg.gradle.appname=$APP_BASE_NAME\"" -classpath "\"$CLASSPATH\"" org.gradle.wrapper.GradleWrapperMain "$APP_ARGS"

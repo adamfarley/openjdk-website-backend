@@ -1,0 +1,43 @@
+#!groovy
+
+node(LABEL) {
+	if (fileExists('testoutput')) {
+		println "Results files may be present from a previous run. Cleaning up."
+		dir('testoutput') {
+			deleteDir()
+		}
+		println "testoutput directory has been erased."
+	}
+	
+	sh "mkdir testoutput"
+
+	if (params.TEST_RESULTS_DIRECTORY.isEmpty()) {
+		println "No TEST_RESULTS_DIRECTORY has been specified. Copying results files from UPSTREAM_JOB_NAME: ${params.UPSTREAM_JOB_NAME}"
+		copyArtifacts fingerprintArtifacts: true, projectName: "${params.UPSTREAM_JOB_NAME}", flatten: true, selector: specific("${params.UPSTREAM_JOB_NUMBER}"), target: 'testoutput'
+	} else {
+		println "A TEST_RESULTS_DIRECTORY has been specified."
+		println "Instead of copying results files from an upstream job, we will now produce a results file from: ${params.TEST_RESULTS_DIRECTORY}"
+		// tar file: "${WORKSPACE}/testoutput/AQA_temporary_tar_file_name_hotspot_${params.TIMESTAMP}.tar.gz", compress: true, dir: "${params.TEST_RESULTS_DIRECTORY}"
+		dir('testoutput') {
+			sh "tar cf - ${params.TEST_RESULTS_DIRECTORY} | gzip > ${WORKSPACE}/testoutput/AQA_temporary_tar_file_name_hotspot_${params.TIMESTAMP}.tar.gz"
+		}
+	}
+
+	String website_backend_clone = "${WORKSPACE}/openjdk-website-backend"
+
+	// Clone or refresh clone of the openjdk_website_backend (which contains the code we'll need for the job).
+	if (fileExists(website_backend_clone)) {
+		println "Node already has an openjdk-website-backend clone."
+		println "This clone will now be refreshed."
+		sh "rm -rf " + website_backend_clone;
+	} else {
+		println "Node does not have an openjdk-website-backend clone."
+		println "This repo will now be cloned."
+	}
+	// Clone openjdk_website_backend repo
+	sh "git clone -b jck_upgrade https://github.com/adamfarley/openjdk-website-backend.git " + website_backend_clone
+	
+	withCredentials([string(credentialsId: "${params.GITHUB_TOKEN}", variable: 'token')]) {
+		sh website_backend_clone + "/sbin/Release.sh";
+	}
+}

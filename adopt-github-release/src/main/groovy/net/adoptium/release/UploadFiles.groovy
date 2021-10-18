@@ -6,6 +6,9 @@ import groovy.transform.CompileStatic
 import org.kohsuke.github.*
 import org.kohsuke.github.extras.ImpatientHttpConnector
 
+import java.io.BufferedInputStream
+import java.io.InputStream
+import java.net.URLConnection
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 
@@ -14,20 +17,22 @@ class UploadAdoptReleaseFiles {
 
     private final String tag
     private final String description
+    private final String git_token
     private final boolean release
     private final List<File> files
     private final String version
     private final String server
-    private final String org
+    private final String user_and_repo
 
-    UploadAdoptReleaseFiles(String tag, String description, boolean release, String version, String server, String org, List<File> files) {
+    UploadAdoptReleaseFiles(String tag, String description, String git_token, boolean release, String version, String server, String user_and_repo, List<File> files) {
         this.tag = tag
         this.description = description
+        this.git_token = git_token
         this.release = release
         this.files = files
         this.version = version
         this.server = server
-        this.org = org
+        this.user_and_repo = user_and_repo
     }
 
     void release() {
@@ -42,14 +47,13 @@ class UploadAdoptReleaseFiles {
     }
 
     private GHRepository getRepo(String vendor) {
-        String token = System.getenv("GITHUB_TOKEN")
-        if (token == null) {
+        if (git_token.equals("notoken")) {
             System.err.println("Could not find GITHUB_TOKEN")
             System.exit(1)
         }
 
         println("Using Github server:'${server}'")
-        GitHub github = GitHub.connectUsingOAuth(server, token)
+        GitHub github = GitHub.connectUsingOAuth(server, git_token)
 
         github
                 .setConnector(new ImpatientHttpConnector(new HttpConnector() {
@@ -60,17 +64,16 @@ class UploadAdoptReleaseFiles {
                         (int) TimeUnit.SECONDS.toMillis(120),
                         (int) TimeUnit.SECONDS.toMillis(120)))
 
-        println("Using Github org:'${org}'")
+        println("Using Github repo:'${user_and_repo}'")
         // jdk11 => 11
         def numberVersion = version.replaceAll(/[^0-9]/, "")
-        def repoName = "sophia-guo/runaqaTest"
 
-
-        return github.getRepository(repoName)
+        return github.getRepository(user_and_repo)
     }
 
     private void uploadFiles(GHRelease release, List<File> files) {
         List<GHAsset> assets = release.getAssets()
+        if(files == null) println("nulltimes end")
         files.each { file ->
             // Delete existing asset
             assets
@@ -79,9 +82,10 @@ class UploadAdoptReleaseFiles {
                         println("Updating ${existing.name}")
                         existing.delete()
                     }
-
             println("Uploading ${file.name}")
-            release.uploadAsset(file, Files.probeContentType(file.toPath()))
+            String ContentTypeString = Files.probeContentType(file.toPath())
+            if (ContentTypeString == null && file.name.endsWith(".tar.gz")) ContentTypeString = "application/x-compressed-tar"
+            release.uploadAsset(file, ContentTypeString)
         }
     }
 
@@ -111,10 +115,11 @@ static void main(String[] args) {
     new UploadAdoptReleaseFiles(
             options.t,
             options.d,
+            options.g,
             options.r,
             options.v,
             options.s,
-            options.o,
+            options.u,
             files,
     ).release()
 }
@@ -128,10 +133,11 @@ private OptionAccessor parseArgs(String[] args) {
                 v longOpt: 'version', type: String, args: 1, 'JDK version'
                 t longOpt: 'tag', type: String, args: 1, 'Tag name'
                 d longOpt: 'description', type: String, args: 1, 'Release description'
+                g longOpt: 'git_token', type: String, args: 1, 'Token for github server'
                 r longOpt: 'release', 'Is a release build'
                 h longOpt: 'help', 'Show usage information'
                 s longOpt: 'server', type: String, args: 1, optionalArg: true, defaultValue: 'https://api.github.com', 'Github server'
-                o longOpt: 'org', type: String, args: 1, optionalArg: true, defaultValue: 'adoptium', 'Github org'
+                u longOpt: 'user_and_repo', type: String, args: 1, optionalArg: true, defaultValue: 'no_repo_provided', 'Github user and repo'
             }
 
     def options = cliBuilder.parse(args)
