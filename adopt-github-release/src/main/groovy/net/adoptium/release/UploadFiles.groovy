@@ -48,6 +48,8 @@ class UploadAdoptReleaseFiles {
             System.exit(1)
         }
 
+        println("Debug: Using token: ${token}")
+
         println("Using Github server:'${server}'")
         GitHub github = GitHub.connectUsingOAuth(server, token)
 
