@@ -30,14 +30,14 @@ class UploadAdoptReleaseFiles {
         this.org = org
 
 		System.out.println("adfarley: Parsed args start")
-		System.out.println("tag = " + this.tag);
-        System.out.println("description = " + this.description);
-        System.out.println("release = " + this.release);
-        System.out.println("files = " + this.files);
-        System.out.println("version = " + this.version);
-        System.out.println("server = " + this.server);
-        System.out.println("org = " + this.org);
-		System.out.println("adfarley: Parsed args end");
+		System.out.println("tag = " + this.tag)
+        System.out.println("description = " + this.description)
+        System.out.println("release = " + this.release)
+        System.out.println("files = " + this.files)
+        System.out.println("version = " + this.version)
+        System.out.println("server = " + this.server)
+        System.out.println("org = " + this.org)
+		System.out.println("adfarley: Parsed args end")
     }
 
     void release() {
@@ -52,13 +52,13 @@ class UploadAdoptReleaseFiles {
     }
 
     private GHRepository getRepo(String vendor) {
-        String token = System.getenv("GITHUB_TOKEN")
-        if (token == null) {
+        String pretoken = System.getenv("GITHUB_TOKEN")
+        if (pretoken == null) {
             System.err.println("Could not find GITHUB_TOKEN")
             System.exit(1)
         }
 
-		withCredentials([string(credentialsId: "${params.GITHUB_TOKEN}", variable: 'token')]) {
+		withCredentials([string(credentialsId: ${pretoken}, variable: 'token')]) {
 						
 						
 						
