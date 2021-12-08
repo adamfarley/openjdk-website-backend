@@ -58,7 +58,7 @@ class UploadAdoptReleaseFiles {
             System.exit(1)
         }
 
-		withCredentials([string(credentialsId: ${pretoken}, variable: 'token')]) {
+		withCredentials([string(credentialsId: pretoken, variable: 'token')]) {
 						
 						
 						
