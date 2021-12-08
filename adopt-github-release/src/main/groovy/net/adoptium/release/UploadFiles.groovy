@@ -58,6 +58,8 @@ class UploadAdoptReleaseFiles {
             System.exit(1)
         }
 
+		// withCredentials([string(credentialsId: "${params.GITHUB_TOKEN}", variable: 'token')]) {
+		// withCredentials([string(credentialsId: System.getenv("GITHUB_TOKEN"), variable: 'token')]) {
 		withCredentials([string(credentialsId: 'github-bot-token', variable: 'token')]) {
 			
 	        println("Debug: Using token: ${token}")
