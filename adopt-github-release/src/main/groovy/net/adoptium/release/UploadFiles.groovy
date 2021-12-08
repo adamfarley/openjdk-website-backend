@@ -59,49 +59,33 @@ class UploadAdoptReleaseFiles {
         }
 
 		withCredentials([string(credentialsId: 'github-bot-token', variable: 'token')]) {
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-        println("Debug: Using token: ${token}")
-
-        println("Using Github server:'${server}'")
-        GitHub github = GitHub.connectUsingOAuth(server, token)
-
-        github
-                .setConnector(new ImpatientHttpConnector(new HttpConnector() {
-                    HttpURLConnection connect(URL url) throws IOException {
-                        return (HttpURLConnection) url.openConnection()
-                    }
-                },
-                        (int) TimeUnit.SECONDS.toMillis(120),
-                        (int) TimeUnit.SECONDS.toMillis(120)))
-
-        println("Using Github org:'${org}'")
-        // jdk11 => 11
-        def numberVersion = version.replaceAll(/[^0-9]/, "")
-
-        String repoName = System.getenv("REPORT_ARCHIVE_REPO")
-        if (token == null) {
-            System.err.println("Could not find REPORT_ARCHIVE_REPO")
-            System.exit(1)
-        }
-
-        return github.getRepository(repoName)
-        
-        
-        
-        
-        
-        
-        
-			}
+			
+	        println("Debug: Using token: ${token}")
+	
+	        println("Using Github server:'${server}'")
+	        GitHub github = GitHub.connectUsingOAuth(server, token)
+	
+	        github
+	                .setConnector(new ImpatientHttpConnector(new HttpConnector() {
+	                    HttpURLConnection connect(URL url) throws IOException {
+	                        return (HttpURLConnection) url.openConnection()
+	                    }
+	                },
+	                        (int) TimeUnit.SECONDS.toMillis(120),
+	                        (int) TimeUnit.SECONDS.toMillis(120)))
+	
+	        println("Using Github org:'${org}'")
+	        // jdk11 => 11
+	        def numberVersion = version.replaceAll(/[^0-9]/, "")
+	
+	        String repoName = System.getenv("REPORT_ARCHIVE_REPO")
+	        if (token == null) {
+	            System.err.println("Could not find REPORT_ARCHIVE_REPO")
+	            System.exit(1)
+	        }
+	
+	        return github.getRepository(repoName)
+		}
     }
 
     private void uploadFiles(GHRelease release, List<File> files) {
