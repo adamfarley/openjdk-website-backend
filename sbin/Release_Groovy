@@ -1,0 +1,7 @@
+#!groovy
+
+withCredentials([string(credentialsId: "${params.GITHUB_TOKEN}", variable: 'token')]) {
+// withCredentials([string(credentialsId: System.getenv("GITHUB_TOKEN"), variable: 'token')]) {
+// withCredentials([string(credentialsId: 'github-bot-token', variable: 'token')]) {
+	sh "Release.sh ${token}";
+}

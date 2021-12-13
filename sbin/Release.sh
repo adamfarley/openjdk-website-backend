@@ -14,6 +14,12 @@
 #
 timestampRegex="[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2}-[[:digit:]]{2}-[[:digit:]]{2}"
 
+git_token = "notoken"
+if [ $# -ge 1 ]
+  then
+    git_token = $1
+fi
+
 for file in testoutput/AQA_*
 do
   echo "Processing $file";
@@ -34,4 +40,4 @@ server=''
 org='test'
 cd adopt-github-release
 chmod +x gradlew
-GRADLE_USER_HOME=./gradle-cache ./gradlew --no-daemon run --args="--version \"${VERSION}\" --tag \"${TAG}\" --description \"${description}\" ${server} ${org} $RELEASE_OPTION $files"
+GRADLE_USER_HOME=./gradle-cache ./gradlew --no-daemon run --args="--version \"${VERSION}\" --tag \"${TAG}\" --description \"${description}\" --git_token \"${git_token}\" ${server} ${org} $RELEASE_OPTION $files"

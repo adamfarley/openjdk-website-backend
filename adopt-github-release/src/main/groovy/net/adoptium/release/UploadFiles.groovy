@@ -20,9 +20,10 @@ class UploadAdoptReleaseFiles {
     private final String server
     private final String org
 
-    UploadAdoptReleaseFiles(String tag, String description, boolean release, String version, String server, String org, List<File> files) {
+    UploadAdoptReleaseFiles(String tag, String description, String git_token, boolean release, String version, String server, String org, List<File> files) {
         this.tag = tag
         this.description = description
+        this.git_token = git_token
         this.release = release
         this.files = files
         this.version = version
@@ -52,42 +53,37 @@ class UploadAdoptReleaseFiles {
     }
 
     private GHRepository getRepo(String vendor) {
-        String pretoken = System.getenv("GITHUB_TOKEN")
-        if (pretoken == null) {
+        if (git_token.equals("notoken")) {
             System.err.println("Could not find GITHUB_TOKEN")
             System.exit(1)
         }
 
-		// withCredentials([string(credentialsId: "${params.GITHUB_TOKEN}", variable: 'token')]) {
-		// withCredentials([string(credentialsId: System.getenv("GITHUB_TOKEN"), variable: 'token')]) {
-		withCredentials([string(credentialsId: 'github-bot-token', variable: 'token')]) {
-			
-	        println("Debug: Using token: ${token}")
-	
-	        println("Using Github server:'${server}'")
-	        GitHub github = GitHub.connectUsingOAuth(server, token)
-	
-	        github
-	                .setConnector(new ImpatientHttpConnector(new HttpConnector() {
-	                    HttpURLConnection connect(URL url) throws IOException {
-	                        return (HttpURLConnection) url.openConnection()
-	                    }
-	                },
-	                        (int) TimeUnit.SECONDS.toMillis(120),
-	                        (int) TimeUnit.SECONDS.toMillis(120)))
-	
-	        println("Using Github org:'${org}'")
-	        // jdk11 => 11
-	        def numberVersion = version.replaceAll(/[^0-9]/, "")
-	
-	        String repoName = System.getenv("REPORT_ARCHIVE_REPO")
-	        if (token == null) {
-	            System.err.println("Could not find REPORT_ARCHIVE_REPO")
-	            System.exit(1)
-	        }
-	
-	        return github.getRepository(repoName)
-		}
+        println("Using Github server:'${server}'")
+        GitHub github = GitHub.connectUsingOAuth(server, git_token)
+
+        github
+                .setConnector(new ImpatientHttpConnector(new HttpConnector() {
+                    HttpURLConnection connect(URL url) throws IOException {
+                        return (HttpURLConnection) url.openConnection()
+                    }
+                },
+                        (int) TimeUnit.SECONDS.toMillis(120),
+                        (int) TimeUnit.SECONDS.toMillis(120)))
+
+	println("Temp end!")
+    System.exit(1)
+
+        println("Using Github org:'${org}'")
+        // jdk11 => 11
+        def numberVersion = version.replaceAll(/[^0-9]/, "")
+
+        String repoName = System.getenv("REPORT_ARCHIVE_REPO")
+        if (token == null) {
+            System.err.println("Could not find REPORT_ARCHIVE_REPO")
+            System.exit(1)
+        }
+
+        return github.getRepository(repoName)
     }
 
     private void uploadFiles(GHRelease release, List<File> files) {
@@ -138,6 +134,7 @@ static void main(String[] args) {
     new UploadAdoptReleaseFiles(
             options.t,
             options.d,
+            options.g,
             options.r,
             options.v,
             options.s,
@@ -155,6 +152,7 @@ private OptionAccessor parseArgs(String[] args) {
                 v longOpt: 'version', type: String, args: 1, 'JDK version'
                 t longOpt: 'tag', type: String, args: 1, 'Tag name'
                 d longOpt: 'description', type: String, args: 1, 'Release description'
+                g longOpt: 'git_token', type: String, args: 1, 'Token for github server'
                 r longOpt: 'release', 'Is a release build'
                 h longOpt: 'help', 'Show usage information'
                 s longOpt: 'server', type: String, args: 1, optionalArg: true, defaultValue: 'https://api.github.com', 'Github server'
