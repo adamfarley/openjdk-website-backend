@@ -2,9 +2,9 @@
 
 node(LABEL) {
 	copyArtifacts fingerprintArtifacts: true, projectName: "${params.UPSTREAM_JOB_NAME}", selector: specific("${params.UPSTREAM_JOB_NUMBER}"), target: 'testoutput'
-	
+		println "fred"
 	String result = "pwd".execute().text
-	println "fred"
+		println "fred 2"
 	println result.toUpperCase()
 	
 	withCredentials([string(credentialsId: "${params.GITHUB_TOKEN}", variable: 'token')]) {
