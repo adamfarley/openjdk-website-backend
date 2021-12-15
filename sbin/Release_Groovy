@@ -3,6 +3,7 @@
 node(LABEL) {
 	copyArtifacts fingerprintArtifacts: true, projectName: "${params.UPSTREAM_JOB_NAME}", selector: specific("${params.UPSTREAM_JOB_NUMBER}"), target: 'testoutput'
 	println "fred"
+	sh "ls ."
 	
 	withCredentials([string(credentialsId: "${params.GITHUB_TOKEN}", variable: 'token')]) {
 		// withCredentials([string(credentialsId: System.getenv("GITHUB_TOKEN"), variable: 'token')]) {
