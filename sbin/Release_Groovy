@@ -3,6 +3,8 @@
 node(LABEL) {
 	copyArtifacts fingerprintArtifacts: true, projectName: "${params.UPSTREAM_JOB_NAME}", selector: specific("${params.UPSTREAM_JOB_NUMBER}"), target: 'testoutput'
 	println "fred"
+	String result = "ls /home/jenkins/workspace ".execute().text
+	println result.toUpperCase()
 	
 	
 	withCredentials([string(credentialsId: "${params.GITHUB_TOKEN}", variable: 'token')]) {
