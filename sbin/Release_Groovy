@@ -3,9 +3,13 @@
 node(LABEL) {
 	copyArtifacts fingerprintArtifacts: true, projectName: "${params.UPSTREAM_JOB_NAME}", selector: specific("${params.UPSTREAM_JOB_NUMBER}"), filter: "AQA_*.zip", target: 'testoutput'
 	
+	String result = "pwd".execute().text
+	println "fred"
+	println result.toUpperCase()
+	
 	withCredentials([string(credentialsId: "${params.GITHUB_TOKEN}", variable: 'token')]) {
 		// withCredentials([string(credentialsId: System.getenv("GITHUB_TOKEN"), variable: 'token')]) {
 		// withCredentials([string(credentialsId: 'github-bot-token', variable: 'token')]) {
-		sh "Release.sh ${token}";
+		sh "Release.sh";
 	}
 }
