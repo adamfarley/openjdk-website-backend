@@ -8,6 +8,6 @@ node(LABEL) {
 	withCredentials([string(credentialsId: "${params.GITHUB_TOKEN}", variable: 'token')]) {
 		// withCredentials([string(credentialsId: System.getenv("GITHUB_TOKEN"), variable: 'token')]) {
 		// withCredentials([string(credentialsId: 'github-bot-token', variable: 'token')]) {
-		sh "/home/jenkins/workspace/openjdk-website-backend/sbin/Release.sh";
+		sh "/home/jenkins/workspace/Archive_Test_Results_2/openjdk-website-backend/sbin/Release.sh";
 	}
 }
