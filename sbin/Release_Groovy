@@ -2,11 +2,12 @@
 
 node(LABEL) {
 	copyArtifacts fingerprintArtifacts: true, projectName: "${params.UPSTREAM_JOB_NAME}", selector: specific("${params.UPSTREAM_JOB_NUMBER}"), target: 'testoutput'
-	println "fred$pwd"
+	println "fred"
+	
 	
 	withCredentials([string(credentialsId: "${params.GITHUB_TOKEN}", variable: 'token')]) {
 		// withCredentials([string(credentialsId: System.getenv("GITHUB_TOKEN"), variable: 'token')]) {
 		// withCredentials([string(credentialsId: 'github-bot-token', variable: 'token')]) {
-		sh "./Release.sh";
+		sh "/home/jenkins/workspace/openjdk-website-backend/sbin/Release.sh";
 	}
 }
