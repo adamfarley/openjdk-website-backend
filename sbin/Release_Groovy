@@ -3,20 +3,20 @@
 node(LABEL) {
 	copyArtifacts fingerprintArtifacts: true, projectName: "${params.UPSTREAM_JOB_NAME}", selector: specific("${params.UPSTREAM_JOB_NUMBER}"), target: 'testoutput'
 
-	def website_backend_clone = new File("${WORKSPACE}/openjdk-website-backend")
+	String website_backend_clone = "${WORKSPACE}/openjdk-website-backend"
 
 	// If website_backend_clone doesn't exist
-	if ( !website_backend_clone.exists() || "${params.REFRESH_BACKEND_REPO}".equalsIgnoreCase("TRUE")) {
-		if (website_backend_clone.exists()) {
+	if ( !fileExists(website_backend_clone) || "${params.REFRESH_BACKEND_REPO}".equalsIgnoreCase("TRUE")) {
+		if (fileExists(website_backend_clone)) {
 			println "Node already has an openjdk-website-backend clone."
 			println "This clone will now be refreshed."
-			website_backend_clone.delete();
+			sh "rm -rf " + website_backend_clone;
 		} else {
 			println "Node does not have an openjdk-website-backend clone."
 			println "This repo will now be cloned."
 		}
 		// Clone openjdk_website_backend repo
-		sh "git clone -b jck_upgrade https://github.com/adamfarley/openjdk-website-backend.git " + website_backend_clone.getAbsolutePath()
+		sh "git clone -b jck_upgrade https://github.com/adamfarley/openjdk-website-backend.git " + website_backend_clone
 	} else {
 		println "Node already has an openjdk-website-backend clone."
 		println "A refresh was not requested, so the existing clone will be used."
@@ -25,6 +25,6 @@ node(LABEL) {
 	withCredentials([string(credentialsId: "${params.GITHUB_TOKEN}", variable: 'token')]) {
 		// withCredentials([string(credentialsId: System.getenv("GITHUB_TOKEN"), variable: 'token')]) {
 		// withCredentials([string(credentialsId: 'github-bot-token', variable: 'token')]) {
-		sh website_backend_clone.getAbsolutePath() + "/sbin/Release.sh";
+		sh website_backend_clone + "/sbin/Release.sh";
 	}
 }
