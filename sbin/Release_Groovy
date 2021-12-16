@@ -1,8 +1,9 @@
 #!groovy
 
-println "frob"
-sh "ls ${WORKSPACE}"
-
+node("master") {
+	println "frob"
+	sh "ls ${WORKSPACE}"
+}
 node(LABEL) {
 	copyArtifacts fingerprintArtifacts: true, projectName: "${params.UPSTREAM_JOB_NAME}", selector: specific("${params.UPSTREAM_JOB_NUMBER}"), target: 'testoutput'
 	println "fred"
