@@ -14,6 +14,7 @@ class UploadAdoptReleaseFiles {
 
     private final String tag
     private final String description
+    private final String git_token
     private final boolean release
     private final List<File> files
     private final String version
@@ -78,7 +79,7 @@ class UploadAdoptReleaseFiles {
         def numberVersion = version.replaceAll(/[^0-9]/, "")
 
         String repoName = System.getenv("REPORT_ARCHIVE_REPO")
-        if (token == null) {
+        if (git_token == null) {
             System.err.println("Could not find REPORT_ARCHIVE_REPO")
             System.exit(1)
         }
