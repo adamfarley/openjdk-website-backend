@@ -14,11 +14,11 @@
 #
 timestampRegex="[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2}-[[:digit:]]{2}-[[:digit:]]{2}"
 
-git_token = "notoken"
+git_token="notoken"
 if [[ ! -z "$token" ]]
   then
 	echo "debug12345"
-    git_token = $token
+    git_token=$token
 fi
 
 for file in testoutput/AQA_*
