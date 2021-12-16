@@ -39,6 +39,6 @@ RELEASE_OPTION="--release"
 description='testingrelease'
 server=''
 org='test'
-cd adopt-github-release
+cd $WORKSPACE/openjdk-website-backend/adopt-github-release
 chmod +x gradlew
 GRADLE_USER_HOME=./gradle-cache ./gradlew --no-daemon run --args="--version \"${VERSION}\" --tag \"${TAG}\" --description \"${description}\" --git_token \"${git_token}\" ${server} ${org} $RELEASE_OPTION $files"
