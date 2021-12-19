@@ -19,9 +19,9 @@ class UploadAdoptReleaseFiles {
     private final List<File> files
     private final String version
     private final String server
-    private final String org
+    private final String user_and_repo
 
-    UploadAdoptReleaseFiles(String tag, String description, String git_token, boolean release, String version, String server, String org, List<File> files) {
+    UploadAdoptReleaseFiles(String tag, String description, String git_token, boolean release, String version, String server, String user_and_repo, List<File> files) {
         this.tag = tag
         this.description = description
         this.git_token = git_token
@@ -29,7 +29,7 @@ class UploadAdoptReleaseFiles {
         this.files = files
         this.version = version
         this.server = server
-        this.org = org
+        this.user_and_repo = user_and_repo
 
 		System.out.println("adfarley: Parsed args start")
 		System.out.println("tag = " + this.tag)
@@ -38,7 +38,7 @@ class UploadAdoptReleaseFiles {
         System.out.println("files = " + this.files)
         System.out.println("version = " + this.version)
         System.out.println("server = " + this.server)
-        System.out.println("org = " + this.org)
+        System.out.println("user_and_repo = " + this.user_and_repo)
 		System.out.println("adfarley: Parsed args end")
     }
 
@@ -71,20 +71,11 @@ class UploadAdoptReleaseFiles {
                         (int) TimeUnit.SECONDS.toMillis(120),
                         (int) TimeUnit.SECONDS.toMillis(120)))
 
-	println("Temp end!")
-    System.exit(1)
-
-        println("Using Github org:'${org}'")
+        println("Using Github repo:'${user_and_repo}'")
         // jdk11 => 11
         def numberVersion = version.replaceAll(/[^0-9]/, "")
 
-        String repoName = System.getenv("REPORT_ARCHIVE_REPO")
-        if (git_token == null) {
-            System.err.println("Could not find REPORT_ARCHIVE_REPO")
-            System.exit(1)
-        }
-
-        return github.getRepository(repoName)
+        return github.getRepository(user_and_repo)
     }
 
     private void uploadFiles(GHRelease release, List<File> files) {
@@ -123,9 +114,9 @@ class UploadAdoptReleaseFiles {
 static void main(String[] args) {
 	System.out.println("adfarley: args start")
 	for (int i = 0; i < args.length; i++) {
-		System.out.println(args[i]);
+		System.out.println(args[i])
 	}
-	System.out.println("adfarley: args end");
+	System.out.println("adfarley: args end")
 
     OptionAccessor options = parseArgs(args)
 
@@ -139,7 +130,7 @@ static void main(String[] args) {
             options.r,
             options.v,
             options.s,
-            options.o,
+            options.u,
             files,
     ).release()
 }
@@ -157,7 +148,7 @@ private OptionAccessor parseArgs(String[] args) {
                 r longOpt: 'release', 'Is a release build'
                 h longOpt: 'help', 'Show usage information'
                 s longOpt: 'server', type: String, args: 1, optionalArg: true, defaultValue: 'https://api.github.com', 'Github server'
-                o longOpt: 'org', type: String, args: 1, optionalArg: true, defaultValue: 'adoptium', 'Github org'
+                u longOpt: 'user_and_repo', type: String, args: 1, optionalArg: true, defaultValue: 'no_repo_provided', 'Github user and repo'
             }
 
     def options = cliBuilder.parse(args)

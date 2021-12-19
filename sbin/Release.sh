@@ -21,6 +21,20 @@ if [[ ! -z "$token" ]]
     git_token=$token
 fi
 
+server=''
+if [[ ! -z "$SERVER" ]]
+  then
+	echo "debug678"
+    server="--server \"${SERVER}\""
+fi
+
+user_and_repo=''
+if [[ ! -z "$USER_AND_REPO" ]]
+  then
+	echo "debug910"
+    user_and_repo="--user_and_repo \"${USER_AND_REPO}\""
+fi
+
 for file in testoutput/AQA_*
 do
   echo "Processing $file";
@@ -37,8 +51,6 @@ files=`ls $PWD/testoutput/AQA_*  | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/ /g'`
 echo "file si ${files}"
 RELEASE_OPTION="--release"
 description='testingrelease'
-server=''
-org='test'
 cd $WORKSPACE/openjdk-website-backend/adopt-github-release
 chmod +x gradlew
-GRADLE_USER_HOME=./gradle-cache ./gradlew --no-daemon run --args="--version \"${VERSION}\" --tag \"${TAG}\" --description \"${description}\" --git_token \"${git_token}\" ${server} ${org} $RELEASE_OPTION $files"
+GRADLE_USER_HOME=./gradle-cache ./gradlew --no-daemon run --args="--version \"${VERSION}\" --tag \"${TAG}\" --description \"${description}\" --git_token \"${git_token}\" ${server} ${user_and_repo} $RELEASE_OPTION $files"
