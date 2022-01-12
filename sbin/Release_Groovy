@@ -23,8 +23,6 @@ node(LABEL) {
 	}
 	
 	withCredentials([string(credentialsId: "${params.GITHUB_TOKEN}", variable: 'token')]) {
-		// withCredentials([string(credentialsId: System.getenv("GITHUB_TOKEN"), variable: 'token')]) {
-		// withCredentials([string(credentialsId: 'github-bot-token', variable: 'token')]) {
 		sh website_backend_clone + "/sbin/Release.sh";
 	}
 }
