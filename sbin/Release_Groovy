@@ -1,6 +1,14 @@
 #!groovy
 
 node(LABEL) {
+	if (fileExists('testoutput')) {
+		println "Results files may be present from a previous run. Cleaning up."
+		dir('testoutput') {
+			deleteDir()
+		}
+		println "testoutput directory has been erased."
+	}
+
 	copyArtifacts fingerprintArtifacts: true, projectName: "${params.UPSTREAM_JOB_NAME}", flatten: true, selector: specific("${params.UPSTREAM_JOB_NUMBER}"), target: 'testoutput'
 
 	String website_backend_clone = "${WORKSPACE}/openjdk-website-backend"

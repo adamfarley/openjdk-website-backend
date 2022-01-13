@@ -32,11 +32,6 @@ if [[ ! -z "$USER_AND_REPO" ]]
     user_and_repo="--user_and_repo \"${USER_AND_REPO}\""
 fi
 
-for file in testoutput/*
-do
-  echo "Processing $file";
-done
-
 for file in testoutput/AQA_*
 do
   echo "Processing $file";
