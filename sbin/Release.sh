@@ -17,21 +17,18 @@ timestampRegex="[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2}-[[:digit:]]{2}-[[:d
 git_token="notoken"
 if [[ ! -z "$token" ]]
   then
-	echo "debug12345"
     git_token=$token
 fi
 
 server=''
 if [[ ! -z "$SERVER" ]]
   then
-	echo "debug678"
     server="--server \"${SERVER}\""
 fi
 
 user_and_repo=''
 if [[ ! -z "$USER_AND_REPO" ]]
   then
-	echo "debug910"
     user_and_repo="--user_and_repo \"${USER_AND_REPO}\""
 fi
 
