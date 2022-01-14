@@ -7,7 +7,6 @@ node(LABEL) {
 			deleteDir()
 		}
 		println "testoutput directory has been erased."
-		new File('testoutput').mkdir()
 	}
 
 	if (params.TEST_RESULTS_DIRECTORY.isEmpty()) {
