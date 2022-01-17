@@ -49,9 +49,7 @@ class UploadAdoptReleaseFiles {
             }
         }
         GHRepository repo = getRepo("adopt")
-        println("debug 2")
         GHRelease release = getRelease(repo)
-        println("debug 3")
         uploadFiles(release, grouped.get("adopt"))
     }
 
@@ -76,12 +74,14 @@ class UploadAdoptReleaseFiles {
         println("Using Github repo:'${user_and_repo}'")
         // jdk11 => 11
         def numberVersion = version.replaceAll(/[^0-9]/, "")
-		println("debug 1")
+
         return github.getRepository(user_and_repo)
     }
 
     private void uploadFiles(GHRelease release, List<File> files) {
+    	println("debug 1")
         List<GHAsset> assets = release.getAssets()
+        println("debug 2")
         files.each { file ->
             // Delete existing asset
             assets
@@ -94,6 +94,7 @@ class UploadAdoptReleaseFiles {
             println("Uploading ${file.name}")
             release.uploadAsset(file, Files.probeContentType(file.toPath()))
         }
+        println("debug 3")
     }
 
     private GHRelease getRelease(GHRepository repo) {
