@@ -48,11 +48,8 @@ class UploadAdoptReleaseFiles {
                 case ~/.*hotspot.*/: "adopt"; break;
             }
         }
-        if(grouped == null) println("nulltimes 1")
         GHRepository repo = getRepo("adopt")
         GHRelease release = getRelease(repo)
-        if(grouped == null) println("nulltimes 2")
-        if(grouped.get("adopt") == null) println("nulltimes 3")
         uploadFiles(release, grouped.get("adopt"))
     }
 
