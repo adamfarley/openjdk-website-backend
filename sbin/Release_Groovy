@@ -7,8 +7,9 @@ node(LABEL) {
 			deleteDir()
 		}
 		println "testoutput directory has been erased."
-		sh "mkdir testoutput"
 	}
+	
+	sh "mkdir testoutput"
 
 	if (params.TEST_RESULTS_DIRECTORY.isEmpty()) {
 		println "No TEST_RESULTS_DIRECTORY has been specified. Copying results files from UPSTREAM_JOB_NAME: ${params.UPSTREAM_JOB_NAME}"
@@ -17,8 +18,9 @@ node(LABEL) {
 		println "A TEST_RESULTS_DIRECTORY has been specified."
 		println "Instead of copying results files from an upstream job, we will now produce a results file from: ${params.TEST_RESULTS_DIRECTORY}"
 		// tar file: "${WORKSPACE}/testoutput/AQA_${params.UPSTREAM_JOB_NAME}_${params.TIMESTAMP}.tar.gz", compress: true, dir: "${params.TEST_RESULTS_DIRECTORY}"
-		
-		sh "tar -czf ${WORKSPACE}/testoutput/AQA_${params.UPSTREAM_JOB_NAME}_${params.TIMESTAMP}.tar.gz ${params.TEST_RESULTS_DIRECTORY}"
+		dir('testoutput') {
+			sh "tar -czf ${WORKSPACE}/testoutput/AQA_${params.UPSTREAM_JOB_NAME}_${params.TIMESTAMP}.tar.gz ${params.TEST_RESULTS_DIRECTORY}"
+		}
 	}
 
 	String website_backend_clone = "${WORKSPACE}/openjdk-website-backend"
