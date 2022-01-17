@@ -82,11 +82,10 @@ class UploadAdoptReleaseFiles {
     	println("debug 1")
         List<GHAsset> assets = release.getAssets()
         println("debug 2")
-        files.each { 
+        files.each { file ->
         	println("debug 2.25")
-        	file ->
             // Delete existing asset
-            	assets
+            assets
                     .find({ it.name == file.name })
                     .each { GHAsset existing ->
                         println("Updating ${existing.name}")
