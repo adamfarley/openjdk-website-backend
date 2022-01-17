@@ -90,7 +90,7 @@ class UploadAdoptReleaseFiles {
                         println("Updating ${existing.name}")
                         existing.delete()
                     }
-
+			println("debug 2.5")
             println("Uploading ${file.name}")
             release.uploadAsset(file, Files.probeContentType(file.toPath()))
         }
