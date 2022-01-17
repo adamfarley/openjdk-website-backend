@@ -48,8 +48,11 @@ class UploadAdoptReleaseFiles {
                 case ~/.*hotspot.*/: "adopt"; break;
             }
         }
+        if(grouped == null) println("nulltimes 1")
         GHRepository repo = getRepo("adopt")
         GHRelease release = getRelease(repo)
+        if(grouped == null) println("nulltimes 2")
+        if(grouped.get("adopt") == null) println("nulltimes 3")
         uploadFiles(release, grouped.get("adopt"))
     }
 
@@ -79,14 +82,9 @@ class UploadAdoptReleaseFiles {
     }
 
     private void uploadFiles(GHRelease release, List<File> files) {
-    	println("debug 1")
         List<GHAsset> assets = release.getAssets()
-        println("debug 2")
-        if(files == null) println("nulltimes")
+        if(files == null) println("nulltimes end")
         files.each { file ->
-        	println("debug 2.25")
-        	
-        	println("debug 2.125")
             // Delete existing asset
             assets
                     .find({ it.name == file.name })
@@ -94,11 +92,9 @@ class UploadAdoptReleaseFiles {
                         println("Updating ${existing.name}")
                         existing.delete()
                     }
-			println("debug 2.5")
             println("Uploading ${file.name}")
             release.uploadAsset(file, Files.probeContentType(file.toPath()))
         }
-        println("debug 3")
     }
 
     private GHRelease getRelease(GHRepository repo) {
