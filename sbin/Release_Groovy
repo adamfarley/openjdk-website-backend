@@ -19,28 +19,23 @@ node(LABEL) {
 		println "Instead of copying results files from an upstream job, we will now produce a results file from: ${params.TEST_RESULTS_DIRECTORY}"
 		// tar file: "${WORKSPACE}/testoutput/AQA_${params.UPSTREAM_JOB_NAME}_${params.TIMESTAMP}.tar.gz", compress: true, dir: "${params.TEST_RESULTS_DIRECTORY}"
 		dir('testoutput') {
-			sh "tar -czf ${WORKSPACE}/testoutput/AQA_${params.UPSTREAM_JOB_NAME}_hotspot_manual_test_output_${params.TIMESTAMP}.tar.gz ${params.TEST_RESULTS_DIRECTORY}"
+			sh "tar -czf ${WORKSPACE}/testoutput/AQA_${params.UPSTREAM_JOB_NAME}_hotspot_${params.TIMESTAMP}.tar.gz ${params.TEST_RESULTS_DIRECTORY}"
 		}
 	}
 
 	String website_backend_clone = "${WORKSPACE}/openjdk-website-backend"
 
-	// If website_backend_clone doesn't exist
-	if ( !fileExists(website_backend_clone) || "${params.REFRESH_BACKEND_REPO}".equalsIgnoreCase("TRUE")) {
-		if (fileExists(website_backend_clone)) {
-			println "Node already has an openjdk-website-backend clone."
-			println "This clone will now be refreshed."
-			sh "rm -rf " + website_backend_clone;
-		} else {
-			println "Node does not have an openjdk-website-backend clone."
-			println "This repo will now be cloned."
-		}
-		// Clone openjdk_website_backend repo
-		sh "git clone -b jck_upgrade https://github.com/adamfarley/openjdk-website-backend.git " + website_backend_clone
-	} else {
+	// Clone or refresh clone of the openjdk_website_backend (which contains the code we'll need for the job).
+	if (fileExists(website_backend_clone)) {
 		println "Node already has an openjdk-website-backend clone."
-		println "A refresh was not requested, so the existing clone will be used."
+		println "This clone will now be refreshed."
+		sh "rm -rf " + website_backend_clone;
+	} else {
+		println "Node does not have an openjdk-website-backend clone."
+		println "This repo will now be cloned."
 	}
+	// Clone openjdk_website_backend repo
+	sh "git clone -b jck_upgrade https://github.com/adamfarley/openjdk-website-backend.git " + website_backend_clone
 	
 	withCredentials([string(credentialsId: "${params.GITHUB_TOKEN}", variable: 'token')]) {
 		sh website_backend_clone + "/sbin/Release.sh";

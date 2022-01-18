@@ -30,16 +30,6 @@ class UploadAdoptReleaseFiles {
         this.version = version
         this.server = server
         this.user_and_repo = user_and_repo
-
-		System.out.println("adfarley: Parsed args start")
-		System.out.println("tag = " + this.tag)
-        System.out.println("description = " + this.description)
-        System.out.println("release = " + this.release)
-        System.out.println("files = " + this.files)
-        System.out.println("version = " + this.version)
-        System.out.println("server = " + this.server)
-        System.out.println("user_and_repo = " + this.user_and_repo)
-		System.out.println("adfarley: Parsed args end")
     }
 
     void release() {
@@ -112,12 +102,6 @@ class UploadAdoptReleaseFiles {
 
 
 static void main(String[] args) {
-	System.out.println("adfarley: args start")
-	for (int i = 0; i < args.length; i++) {
-		System.out.println(args[i])
-	}
-	System.out.println("adfarley: args end")
-
     OptionAccessor options = parseArgs(args)
 
     List<File> files = options.arguments()
