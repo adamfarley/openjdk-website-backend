@@ -56,7 +56,7 @@ if [[ -z "$RESULTS_FILE_NAME" ]]
         nameInt="_${counter}"
       fi
       jobNameSubstring=$(echo "${UPSTREAM_JOB_NAME}" | sed -r 's/([^_]*_){2}//')
-      newName="AQA_${VERSION}_hotspot_${jobNameSubstring}_test_output_${TIMESTAMP}.tar.gz"
+      newName="testoutput/AQA_${VERSION}_hotspot_${jobNameSubstring}_test_output_${TIMESTAMP}.tar.gz"
       echo "Renaming ${file} to ${newName}"
       mv "${file}" "${newName}"
     done
@@ -72,7 +72,7 @@ if [[ ! -z "$RESULTS_FILE_NAME" ]]
       if [ "${counter}" != "0" ]; then
         nameInt="_${counter}"
       fi
-      newName="AQA_${VERSION}_hotspot_${RESULTS_FILE_NAME}${nameInt}_${TIMESTAMP}.tar.gz"
+      newName="testoutput/AQA_${VERSION}_hotspot_${RESULTS_FILE_NAME}${nameInt}_${TIMESTAMP}.tar.gz"
       echo "Renaming ${file} to ${newName}"
       mv "${file}" "${newName}"
       counter=$((counter+1))
