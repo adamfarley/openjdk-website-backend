@@ -46,19 +46,20 @@ done
 
 counter=0
 if [[ -z "$RESULTS_FILE_NAME" ]]
-  for file in testoutput/*_test_output.tar.gz
-  do
-    echo "File/s detected with default naming convention, like \"openjdk_test_output.tar.gz\"."
-    echo "Correcting these to a job-specific naming format."
-    nameInt=""
-    if [ "${counter}" != "0" ]; then
-      nameInt="_${counter}"
-    fi
-    jobNameSubstring=$(echo "${UPSTREAM_JOB_NAME}" | sed -r 's/([^_]*_){2}//')
-    newName="AQA_${VERSION}_hotspot_${jobNameSubstring}_test_output_${TIMESTAMP}.tar.gz"
-    echo "Renaming ${file} to ${newName}"
-    mv "${file}" "${newName}"
-  done
+  then
+    for file in testoutput/*_test_output.tar.gz
+    do
+      echo "File/s detected with default naming convention, like \"openjdk_test_output.tar.gz\"."
+      echo "Correcting these to a job-specific naming format."
+      nameInt=""
+      if [ "${counter}" != "0" ]; then
+        nameInt="_${counter}"
+      fi
+      jobNameSubstring=$(echo "${UPSTREAM_JOB_NAME}" | sed -r 's/([^_]*_){2}//')
+      newName="AQA_${VERSION}_hotspot_${jobNameSubstring}_test_output_${TIMESTAMP}.tar.gz"
+      echo "Renaming ${file} to ${newName}"
+      mv "${file}" "${newName}"
+    done
 fi
 
 counter=0
