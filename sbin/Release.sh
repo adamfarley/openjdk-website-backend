@@ -33,7 +33,7 @@ if [[ ! -z "$USER_AND_REPO" ]]
 fi
 
 sed_app="sed"
-if [[ $(uname) == “Darwin” ]]
+if [[ "$OSTYPE" == "darwin"* ]]
   then
     echo "Macos detected. Updated Java version to 11 and sed app to gsed."
     sed_app="gsed"
