@@ -32,10 +32,17 @@ if [[ ! -z "$USER_AND_REPO" ]]
     user_and_repo="--user_and_repo \"${USER_AND_REPO}\""
 fi
 
+sed_app="sed"
+if [[ uname == “Darwin” ]]
+  then
+    sed_app="gsed"
+    export JAVA_HOME=$(/usr/libexec/java_home -v 11)
+fi
+
 for file in testoutput/AQA_*
 do
   echo "Processing $file";
-  newName=$(echo "${file}" | sed -r "s/${timestampRegex}/$TIMESTAMP/")
+  newName=$(echo "${file}" | ${sed_app} -r "s/${timestampRegex}/$TIMESTAMP/")
   echo "${newName}"
   if [ "${file}" != "${newName}" ]; then
     # Rename archive and checksum file with new timestamp
@@ -55,7 +62,7 @@ if [[ -z "$RESULTS_FILE_NAME" ]]
       if [ "${counter}" != "0" ]; then
         nameInt="_${counter}"
       fi
-      jobNameSubstring=$(echo "${UPSTREAM_JOB_NAME}" | sed -r 's/([^_]*_){2}//')
+      jobNameSubstring=$(echo "${UPSTREAM_JOB_NAME}" | ${sed_app} -r 's/([^_]*_){2}//')
       newName="testoutput/AQA_${VERSION}_hotspot_${jobNameSubstring}_test_output_${TIMESTAMP}.tar.gz"
       echo "Renaming ${file} to ${newName}"
       mv "${file}" "${newName}"
@@ -79,7 +86,7 @@ if [[ ! -z "$RESULTS_FILE_NAME" ]]
     done
 fi
 
-files=`ls $PWD/testoutput/AQA_*  | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/ /g'`
+files=`ls $PWD/testoutput/AQA_*  | ${sed_app} -e ':a' -e 'N' -e '$!ba' -e 's/\n/ /g'`
 echo "file si ${files}"
 RELEASE_OPTION="--release"
 description="The results files for tests associated with the release of ${TAG}"
