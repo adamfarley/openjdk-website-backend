@@ -33,8 +33,9 @@ if [[ ! -z "$USER_AND_REPO" ]]
 fi
 
 sed_app="sed"
-if [[ uname == “Darwin” ]]
+if [[ $(uname) == “Darwin” ]]
   then
+    echo "Macos detected. Updated Java version to 11 and sed app to gsed."
     sed_app="gsed"
     export JAVA_HOME=$(/usr/libexec/java_home -v 11)
 fi
