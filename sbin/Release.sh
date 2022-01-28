@@ -87,8 +87,8 @@ if [[ ! -z "$RESULTS_FILE_NAME" ]]
     done
 fi
 
-files=`ls $PWD/testoutput/AQA_*  | ${sed_app} -e ':a' -e 'N' -e '$!ba' -e 's/\n/ /g'`
-echo "file si ${files}"
+files=`echo $PWD/testoutput/AQA_*`
+echo "Files to be uploaded: ${files}"
 RELEASE_OPTION="--release"
 description="The results files for tests associated with the release of ${TAG}"
 cd $WORKSPACE/openjdk-website-backend/adopt-github-release
