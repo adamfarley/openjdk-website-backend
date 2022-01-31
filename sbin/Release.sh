@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-timestampRegex="[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2}-[[:digit:]]{2}-[[:digit:]]{2}"
-
 git_token="notoken"
 if [[ ! -z "$token" ]]
   then
@@ -32,18 +30,27 @@ if [[ ! -z "$USER_AND_REPO" ]]
     user_and_repo="--user_and_repo \"${USER_AND_REPO}\""
 fi
 
-sed_app="sed"
+sed_app="sed -r"
+timestampRegex="[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2}-[[:digit:]]{2}-[[:digit:]]{2}"
+jobNameBeginningRegex="([^_]*_){2}"
+
 if [[ "$OSTYPE" == "darwin"* ]]
   then
     echo "Macos detected. Updated Java version to 11 and sed app to gsed."
-    sed_app="gsed"
+    sed_app="gsed -r"
     export JAVA_HOME=$(/usr/libexec/java_home -v 11)
+elif [[ "$OSTYPE" == "solaris"* ]]
+  then
+    echo "Solaris detected. Removing -r option from sed commands and adjusting regexs to compensate."
+    sed_app="sed"
+    timestampRegex="[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]"
+    jobNameBeginningRegex="^[a-zA-Z0-9]*_[a-zA-Z0-9]*_"
 fi
 
 for file in testoutput/AQA_*
 do
   echo "Processing $file";
-  newName=$(echo "${file}" | ${sed_app} -r "s/${timestampRegex}/$TIMESTAMP/")
+  newName=$(echo "${file}" | ${sed_app} "s/${timestampRegex}/$TIMESTAMP/")
   echo "${newName}"
   if [ "${file}" != "${newName}" ]; then
     # Rename archive and checksum file with new timestamp
@@ -52,7 +59,7 @@ do
   fi
 done
 
-counter=0
+counter=1
 if [[ -z "$RESULTS_FILE_NAME" ]]
   then
     for file in testoutput/*_test_output.tar.gz
@@ -60,25 +67,26 @@ if [[ -z "$RESULTS_FILE_NAME" ]]
       echo "File/s detected with default naming convention, like \"openjdk_test_output.tar.gz\"."
       echo "Correcting these to a job-specific naming format."
       nameInt=""
-      if [ "${counter}" != "0" ]; then
-        nameInt="_${counter}"
+      if [ "${counter}" != "1" ]; then
+        nameInt="_ResultsNum${counter}"
       fi
-      jobNameSubstring=$(echo "${UPSTREAM_JOB_NAME}" | ${sed_app} -r 's/([^_]*_){2}//')
-      newName="testoutput/AQA_${VERSION}_hotspot_${jobNameSubstring}_test_output_${TIMESTAMP}.tar.gz"
+      jobNameSubstring=$(echo "${UPSTREAM_JOB_NAME}" | ${sed_app} "s/${jobNameBeginningRegex}//")
+      newName="testoutput/AQA_${VERSION}_hotspot_${jobNameSubstring}_test_output${nameInt}_${TIMESTAMP}.tar.gz"
       echo "Renaming ${file} to ${newName}"
       mv "${file}" "${newName}"
+      counter=$((counter+1))
     done
 fi
 
-counter=0
+counter=1
 if [[ ! -z "$RESULTS_FILE_NAME" ]]
   then
     for file in testoutput/*.tar.gz
     do
       echo "Replacing test results file name with RESULTS_FILE_NAME value."
       nameInt=""
-      if [ "${counter}" != "0" ]; then
-        nameInt="_${counter}"
+      if [ "${counter}" != "1" ]; then
+        nameInt="_ResultsNum${counter}"
       fi
       newName="testoutput/AQA_${VERSION}_hotspot_${RESULTS_FILE_NAME}${nameInt}_${TIMESTAMP}.tar.gz"
       echo "Renaming ${file} to ${newName}"
