@@ -101,4 +101,5 @@ RELEASE_OPTION="--release"
 description="The results files for tests associated with the release of ${TAG}"
 cd $WORKSPACE/openjdk-website-backend/adopt-github-release
 chmod +x gradlew
+echo "./gradle-cache ./gradlew --no-daemon run --args=abc--version \"${VERSION}\" --tag \"${TAG}\" --description \"${description}\" --git_token \"${git_token}\" ${server} ${user_and_repo} $RELEASE_OPTION $files abc"
 GRADLE_USER_HOME=./gradle-cache ./gradlew --no-daemon run --args="--version \"${VERSION}\" --tag \"${TAG}\" --description \"${description}\" --git_token \"${git_token}\" ${server} ${user_and_repo} $RELEASE_OPTION $files"
