@@ -154,7 +154,7 @@ if $cygwin ; then
         else
             eval `echo args$i`="\"$arg\""
         fi
-        i=$((i+1))
+        i=`echo $i + 1 | bc`
     done
     case $i in
         (0) set -- ;;
