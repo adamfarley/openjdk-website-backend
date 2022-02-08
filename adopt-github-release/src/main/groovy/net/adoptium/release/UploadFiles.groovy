@@ -80,6 +80,7 @@ class UploadAdoptReleaseFiles {
                         existing.delete()
                     }
             println("Uploading ${file.name}")
+            println("Content type is: " + Files.probeContentType(file.toPath()))
             release.uploadAsset(file, Files.probeContentType(file.toPath()))
         }
     }
