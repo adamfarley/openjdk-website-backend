@@ -6,6 +6,9 @@ import groovy.transform.CompileStatic
 import org.kohsuke.github.*
 import org.kohsuke.github.extras.ImpatientHttpConnector
 
+import java.io.BufferedInputStream
+import java.io.InputStream
+import java.net.URLConnection
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 
@@ -80,7 +83,10 @@ class UploadAdoptReleaseFiles {
                         existing.delete()
                     }
             println("Uploading ${file.name}")
-            println("Content type is: " + Files.probeContentType(file.toPath()))
+            println("FILES Content type is: " + Files.probeContentType(file.toPath()))
+            println("URLCONNECTION Content type is: " + URLConnection.guessContentTypeFromName(file.getName()))
+            InputStream istream = new BufferedInputStream(new FileInputStream(file));
+            println("STREAM Content type is: " + URLConnection.guessContentTypeFromStream(istream))
             release.uploadAsset(file, Files.probeContentType(file.toPath()))
         }
     }
