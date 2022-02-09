@@ -83,9 +83,9 @@ class UploadAdoptReleaseFiles {
                         existing.delete()
                     }
             println("Uploading ${file.name}")
-            String ContentTypeString = Files.probeContentType(file.toPath()))
+            String ContentTypeString = Files.probeContentType(file.toPath())
             if (ContentTypeString == null && file.name.endsWith(".tar.gz")) ContentTypeString = "application/x-compressed-tar"
-            release.uploadAsset(file, Files.probeContentType(file.toPath()))
+            release.uploadAsset(file, ContentTypeString)
         }
     }
 
