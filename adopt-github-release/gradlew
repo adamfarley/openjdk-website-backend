@@ -67,7 +67,7 @@ darwin=false
 nonstop=false
 case "`uname`" in
   CYGWIN* )
-    cygwin=false
+    cygwin=true
     ;;
   Darwin* )
     darwin=true
@@ -152,7 +152,8 @@ if $cygwin ; then
         if [ $CHECK -ne 0 ] && [ $CHECK2 -eq 0 ] ; then                    ### Added a condition
             eval `echo args$i`=`cygpath --path --ignore --mixed "$arg"`
         else
-            eval `echo args$i`=`echo "\""; echo $arg | sed 's/\"/\\\"/g';"\""`
+            superarg=`echo $arg | sed 's/\"/\\\"/g'`
+            eval `echo args$i`="\"$superarg\""
         fi
         i+=1
     done
