@@ -83,11 +83,8 @@ class UploadAdoptReleaseFiles {
                         existing.delete()
                     }
             println("Uploading ${file.name}")
-            println("FILES Content type is: " + Files.probeContentType(file.toPath()))
-            println("URLCONNECTION Content type is: " + URLConnection.guessContentTypeFromName(file.getName()))
-            if(file.exists()) println("File exists.")
-            InputStream istream = new BufferedInputStream(new FileInputStream(file));
-            println("STREAM Content type is: " + URLConnection.guessContentTypeFromStream(istream))
+            String ContentTypeString = Files.probeContentType(file.toPath()))
+            if (ContentTypeString == null && file.name.endsWith(".tar.gz")) ContentTypeString = "application/x-compressed-tar"
             release.uploadAsset(file, Files.probeContentType(file.toPath()))
         }
     }
