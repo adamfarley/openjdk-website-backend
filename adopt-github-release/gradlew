@@ -175,7 +175,7 @@ fi
 # Escape application args
 save () {
 	echo "debug starts here"
-	for i do echo $i ; done
+	for i do echo "$i" ; done
 	echo "debug ends here"
     for i do printf %s\\n "$i" | sed "s/'/'\\\\''/g;1s/^/'/;\$s/\$/' \\\\/" ; done
     echo " "
