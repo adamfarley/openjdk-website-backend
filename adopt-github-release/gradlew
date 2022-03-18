@@ -180,7 +180,7 @@ save () {
 echo "debug starts here: $@"
 APP_ARGS=`save "$@"`
 
-export _JAVA_OPTIONS="-Djava.net.preferIPv6Addresses=true $_JAVA_OPTIONS"
+export _JAVA_OPTIONS="-Djava.net.preferIPv6Addresses=true -Xmx1g $_JAVA_OPTIONS"
 
 # Collect all arguments for the java command, following the shell quoting and substitution rules
 eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS "\"-Dorg.gradle.appname=$APP_BASE_NAME\"" -classpath "\"$CLASSPATH\"" org.gradle.wrapper.GradleWrapperMain "$APP_ARGS"
