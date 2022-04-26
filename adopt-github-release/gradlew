@@ -64,6 +64,7 @@ die () {
 cygwin=false
 msys=false
 darwin=false
+arm=false
 nonstop=false
 case "`uname`" in
   CYGWIN* )
@@ -77,6 +78,11 @@ case "`uname`" in
     ;;
   NONSTOP* )
     nonstop=true
+    ;;
+esac
+case "`uname -m`" in
+  arm* )
+    arm=true
     ;;
 esac
 
@@ -180,7 +186,11 @@ save () {
 echo "debug starts here: $@"
 APP_ARGS=`save "$@"`
 
-export _JAVA_OPTIONS="-Djava.net.preferIPv6Addresses=true -Xmx1g $_JAVA_OPTIONS"
+arch_specific_java_options=""
+if $arm; then
+    arch_specific_java_options="-Djava.net.preferIPv6Addresses=true"
+fi
+export _JAVA_OPTIONS="$arch_specific_java_options -Xmx1g $_JAVA_OPTIONS"
 
 # Collect all arguments for the java command, following the shell quoting and substitution rules
 eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS "\"-Dorg.gradle.appname=$APP_BASE_NAME\"" -classpath "\"$CLASSPATH\"" org.gradle.wrapper.GradleWrapperMain "$APP_ARGS"
